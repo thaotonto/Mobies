@@ -4,23 +4,25 @@ import {NavigationActions} from 'react-navigation';
 import {View, Text} from 'react-native';
 
 class DetailScreen extends Component {
-    static navigationOptions = {
-        headerStyle: {
-          backgroundColor: '#212121',
-        },
-        headerTintColor: '#fff',
-        headerTitleStyle: {
-          fontWeight: 'bold',
-        },
-    };
-
     render() {
         return (
-            <View>
-                <Text> DetailScreen </Text>
-            </View>
+            <SafeAreaView style={styles.container}>
+                <StatusBar
+                    barStyle='light-content'
+                    backgroundColor='#1a1a1a'
+                />
+                
+
+            </SafeAreaView>
         );
     }
 }
+
+const styles = {
+    container: {
+        backgroundColor: '#303030',
+        flex: 1
+    }
+};
 
 export default DetailScreen;

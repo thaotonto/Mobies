@@ -12,6 +12,17 @@ import MovieListScreen from './MovieListScreen';
 export const AppNavigator = StackNavigator({
     MovieList: {screen: MovieListScreen, navigationOptions: {title: 'Movies'}},
     Detail: {screen: DetailScreen}
+},
+{
+    navigationOptions: {
+        headerStyle: {
+            backgroundColor: '#212121',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+            fontWeight: 'bold',
+        }
+    }
 });
 
 class Router extends Component {
