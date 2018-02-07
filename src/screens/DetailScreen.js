@@ -1,9 +1,26 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {NavigationActions} from 'react-navigation';
-import {View, Text} from 'react-native';
+import {View, Text, SafeAreaView, StatusBar, Button} from 'react-native';
 
 class DetailScreen extends Component {
+    static navigationOptions = {
+        headerStyle: {
+            backgroundColor: '#212121',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+            fontWeight: 'bold',
+        },
+        headerMode: 'none',
+        drawerLockMode: 'locked-closed'
+    }
+
+    onPressDetail() {
+        console.log(this.props);
+        this.props.navigation.goBack();
+    }
+
     render() {
         return (
             <SafeAreaView style={styles.container}>
@@ -12,7 +29,12 @@ class DetailScreen extends Component {
                     backgroundColor='#1a1a1a'
                 />
                 
-
+                <Button
+                    onPress={this.onPressDetail.bind(this)}
+                    title="Home"
+                    color="#841584"
+                    accessibilityLabel="Learn more about this purple button"
+                />
             </SafeAreaView>
         );
     }
@@ -25,4 +47,8 @@ const styles = {
     }
 };
 
-export default DetailScreen;
+const mapStateToProps = state => ({
+    nav: state.nav
+});
+
+export default connect(mapStateToProps)(DetailScreen);

@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {NavigationActions} from 'react-navigation';
-import {View, Text, StatusBar, SafeAreaView, ScrollView, Button, BackHandler, Platform, TouchableWithoutFeedback} from 'react-native';
+import {View, Text, StatusBar, SafeAreaView, ScrollView, Button, TouchableWithoutFeedback} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-class MovieListScreen extends Component {
+class TVListScreen extends Component {
     static navigationOptions = ({navigation}) => {
         return {
-            headerMode:'screen',
+            headerMode: 'screen',
             headerBackTitle: null,
             headerStyle: {
                 backgroundColor: '#212121',
@@ -16,8 +16,8 @@ class MovieListScreen extends Component {
             headerTitleStyle: {
                 fontWeight: 'bold',
             },
-            title: 'Movies',
-            drawerLabel: 'Movies',
+            headerTitle: 'TV Shows',
+            drawerLabel: 'TV Shows',
             headerLeft: (
                 <TouchableWithoutFeedback
                     onPress={() => {navigation.navigate('DrawerToggle')}}
@@ -26,12 +26,10 @@ class MovieListScreen extends Component {
                 </TouchableWithoutFeedback>
             ),
             drawerIcon: ({ tintColor }) => (
-                <Icon name="movie-roll" size={24} color="#fff"></Icon>
-              ),
+                <Icon name="television-classic" size={24} color="#fff" ></Icon>
+            ),
     }}
-    
     onPressDetail() {
-        console.log(this.props.nav);
         this.props.navigation.navigate('Detail');
     }
 
@@ -45,7 +43,7 @@ class MovieListScreen extends Component {
                 
                 <Button
                     onPress={this.onPressDetail.bind(this)}
-                    title="Detail"
+                    title="Detail from TV"
                     color="#841584"
                     accessibilityLabel="Learn more about this purple button"
                 />
@@ -61,8 +59,4 @@ const styles = {
     }
 };
 
-const mapStateToProps = state => ({
-    nav: state.nav
-});
-
-export default connect(mapStateToProps)(MovieListScreen);
+export default TVListScreen;

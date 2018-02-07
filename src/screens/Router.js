@@ -1,46 +1,71 @@
-import { StackNavigator, addNavigationHelpers } from 'react-navigation';
+import { StackNavigator, addNavigationHelpers, DrawerNavigator, NavigationActions } from 'react-navigation';
 import {connect} from 'react-redux';
 import React, {Component} from 'react';
 import {addListener} from '../utils/Redux';
 import { BackHandler } from "react-native";
+import CustomDrawerContentComponent from '../components/CustomDrawerContentComponent';
 
 //Screen
 import DetailScreen from './DetailScreen';
 import MovieListScreen from './MovieListScreen';
+import TVListScreen from './TVListScreen';
 
 //---------------------------------------
-export const AppNavigator = StackNavigator({
-    MovieList: {screen: MovieListScreen, navigationOptions: {title: 'Movies'}},
-    Detail: {screen: DetailScreen}
-},
-{
-    navigationOptions: {
-        headerStyle: {
-            backgroundColor: '#212121',
-        },
-        headerTintColor: '#fff',
-        headerTitleStyle: {
-            fontWeight: 'bold',
-        }
+const MovieListStack = StackNavigator({
+    MovieList: {
+        screen: MovieListScreen
+    },
+    Detail: {
+        screen: DetailScreen
     }
+});
+
+const TVListStack = StackNavigator({
+    TVList: {
+        screen: TVListScreen
+    },
+    Detail: {
+        screen: DetailScreen
+    }
+});
+
+export const AppNavigator = DrawerNavigator({
+    MovieListNavigator: {
+        screen: MovieListStack, 
+    },
+    TVListNavigator: {
+        screen: TVListStack
+    }
+},
+{   
+    drawerBackgroundColor: "#303030",    
+    contentComponent: CustomDrawerContentComponent,
+    contentOptions: {
+        activeTintColor: '#fff',
+        inactiveTintColor: '#fff',
+        activeBackgroundColor: '#212121'
+    }
+    
 });
 
 class Router extends Component {
     componentDidMount() {
-        BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
+        BackHandler.addEventListener("hardwareBackPress", this.onBackPress.bind(this));
     }
 
     componentWillUnmount() {
-        BackHandler.removeEventListener("hardwareBackPress", this.onBackPress);
+        BackHandler.removeEventListener("hardwareBackPress", this.onBackPress.bind(this));
     }
 
     onBackPress = () => {
         const { dispatch, nav } = this.props;
-        if (nav.index === 0) {
-          return false;
+        if (nav.routes[0].routes.filter((route) => {
+            return route.index !== 0
+        }).length !== 0) {
+            dispatch(NavigationActions.back());
+            return true;
         }
-        dispatch(NavigationActions.back());
-        return true;
+        return false;
     };
 
     render() {
