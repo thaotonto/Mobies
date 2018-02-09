@@ -17,7 +17,6 @@ class DetailScreen extends Component {
     }
 
     onPressDetail() {
-        console.log(this.props);
         this.props.navigation.goBack();
     }
 

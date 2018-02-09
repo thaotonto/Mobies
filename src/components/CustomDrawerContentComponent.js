@@ -3,23 +3,15 @@ import React, {Component} from 'react';
 import {DrawerItems} from 'react-navigation';
 
 class CustomDrawerContentComponent extends Component{
-    // navigateToScreen = (route) => () => {
-    //     const navigateAction = NavigationActions.navigate({
-    //       routeName: route
-    //     });
-    //     this.props.navigation.dispatch(navigateAction);
-    // }
 
     render () {
         return(
-            // <ScrollView>
-                <View style={styles.container} forceInset={{ top: 'always', horizontal: 'never' }}>
-                    <View style={{backgroundColor:'#1a1a1a', height: 150, justifyContent:'center', marginBottom: 10, marginTop: 0}}>
-                    <Image source={require('../../assets/icon_round.png')} style={{height: 100, width: 100, alignSelf:'center'}}/>
-                    </View>
-                    <DrawerItems {...this.props} />
+            <View style={styles.container} forceInset={{ top: 'always', horizontal: 'never' }}>
+                <View style={{backgroundColor:'#1a1a1a', height: 150, justifyContent:'center', marginBottom: 10, marginTop: 0}}>
+                <Image source={require('../../assets/icon_round.png')} style={{height: 100, width: 100, alignSelf:'center'}}/>
                 </View>
-            // </ScrollView>
+                <DrawerItems {...this.props} />
+            </View>
         )
     }
 }
