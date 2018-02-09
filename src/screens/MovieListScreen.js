@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {NavigationActions} from 'react-navigation';
-import {View, Text, StatusBar, SafeAreaView, ScrollView, Button, BackHandler, Platform, TouchableWithoutFeedback} from 'react-native';
+import {View, Text, StatusBar, SafeAreaView, ScrollView, TouchableWithoutFeedback, ActivityIndicator, Platform} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { LOAD_POPULAR_MOVIE } from '../configs/constants';
+import ViewPagerPage from '../components/ViewPagerPage';
 
 class MovieListScreen extends Component {
     static navigationOptions = ({navigation}) => {
@@ -30,25 +32,37 @@ class MovieListScreen extends Component {
               ),
     }}
     
-    onPressDetail() {
-        console.log(this.props.nav);
-        this.props.navigation.navigate('Detail');
+    componentDidMount(){
+        this.props.dispatch({type: LOAD_POPULAR_MOVIE});
+    }
+
+    renderPopular() {
+        if (this.props.movie.loadingPopular === false) {
+            return (
+                <View style={styles.viewPagerStyle}>
+                <ViewPagerPage list={this.props.movie.popularMovie} />
+                </View>
+            );
+        } else {
+            return (
+                <ActivityIndicator style={{margin: 8}} size='large' color='#ff9900'/>
+            );
+        }
     }
 
     render() {
+        const imageLink = 'https://image.tmdb.org/t/p/w500/lkOZcsXcOLZYeJ2YxJd3vSldvU4.jpg';
+
         return (
             <SafeAreaView style={styles.container}>
                 <StatusBar
                     barStyle='light-content'
                     backgroundColor='#1a1a1a'
                 />
-                
-                <Button
-                    onPress={this.onPressDetail.bind(this)}
-                    title="Detail"
-                    color="#841584"
-                    accessibilityLabel="Learn more about this purple button"
-                />
+            <ScrollView style={{flex: 1}}>
+                {this.renderPopular()}
+            </ScrollView>
+
             </SafeAreaView>
         );
     }
@@ -58,11 +72,18 @@ const styles = {
     container: {
         backgroundColor: '#303030',
         flex: 1
+    },
+    viewPagerStyle: {
+        marginTop: 8,
+        marginBottom: 8,
+        marginLeft: Platform.OS === 'ios' ? 0 : 8,
+        marginRight: Platform.OS === 'ios' ? 0 : 8
     }
 };
 
 const mapStateToProps = state => ({
-    nav: state.nav
+    nav: state.nav,
+    movie: state.movie
 });
 
 export default connect(mapStateToProps)(MovieListScreen);
