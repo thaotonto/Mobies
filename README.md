@@ -7,7 +7,7 @@
 2. npm install
 3. react-native run-ios # or react-native run-android
 
-# if you see error "Unable to resolve module 'react-native-vector-icons/..."
-# try paste and run this command
+if you see error "Unable to resolve module 'react-native-vector-icons/..."
+try paste and run this command
 
 rm ./node_modules/react-native/local-cli/core/__fixtures__/files/package.json
