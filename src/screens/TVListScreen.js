@@ -1,8 +1,12 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {NavigationActions} from 'react-navigation';
-import {View, Text, StatusBar, SafeAreaView, ScrollView, Button, TouchableWithoutFeedback} from 'react-native';
+import {View, Text, StatusBar, SafeAreaView, ScrollView, TouchableWithoutFeedback, ActivityIndicator, Platform} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { LOAD_POPULAR_TV, LOAD_AIRING_TODAY_TV } from '../configs/constants';
+import ViewPagerPage from '../components/ViewPagerPage';
+import ListByCategory from '../components/ListByCategory';
+
 
 class TVListScreen extends Component {
     static navigationOptions = ({navigation}) => {
@@ -29,8 +33,31 @@ class TVListScreen extends Component {
                 <Icon name="television-classic" size={24} color="#fff" ></Icon>
             ),
     }}
-    onPressDetail() {
-        this.props.navigation.navigate('Detail');
+    
+    componentDidMount(){
+        this.props.dispatch({type: LOAD_POPULAR_TV});
+        this.props.dispatch({type: LOAD_AIRING_TODAY_TV});
+    }
+
+    renderPopular() {
+        return (
+            <ViewPagerPage 
+                loading={this.props.tv.loadingPopular}
+                list={this.props.tv.popular}
+                navigation={this.props.navigation}
+            />
+        );
+    }
+
+    renderAiringToday() {
+        return (
+            <ListByCategory
+                title={'airing today'}
+                loading={this.props.tv.loadingAiringToday}
+                list={this.props.tv.airingToday}
+                navigation={this.props.navigation}                
+            />
+        );
     }
 
     render() {
@@ -40,13 +67,12 @@ class TVListScreen extends Component {
                     barStyle='light-content'
                     backgroundColor='#1a1a1a'
                 />
-                
-                <Button
-                    onPress={this.onPressDetail.bind(this)}
-                    title="Detail from TV"
-                    color="#841584"
-                    accessibilityLabel="Learn more about this purple button"
-                />
+
+                <ScrollView style={{flex: 1}}>
+                    {this.renderPopular()}
+                    {this.renderAiringToday()}
+                </ScrollView>
+
             </SafeAreaView>
         );
     }
@@ -59,4 +85,9 @@ const styles = {
     }
 };
 
-export default TVListScreen;
+const mapStateToProps = state => ({
+    nav: state.nav,
+    tv: state.tv
+});
+
+export default connect(mapStateToProps)(TVListScreen);

@@ -7,9 +7,13 @@
     "test": "jest"
   },
   "dependencies": {
+    "lodash": "^4.17.5",
     "react": "16.2.0",
     "react-native": "0.52.2",
     "react-native-action-button": "^2.8.4",
+    "react-native-linear-gradient": "^2.4.0",
+    "react-native-snap-carousel": "^3.6.0",
+    "react-native-star-rating": "^1.0.8",
     "react-native-vector-icons": "^4.5.0",
     "react-navigation": "^1.0.0-beta.29",
     "react-navigation-redux-helpers": "^1.0.0",

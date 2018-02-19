@@ -21,6 +21,8 @@ class DetailScreen extends Component {
     }
 
     render() {
+        const { params } = this.props.navigation.state;
+        console.log(params);
         return (
             <SafeAreaView style={styles.container}>
                 <StatusBar
