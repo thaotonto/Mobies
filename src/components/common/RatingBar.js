@@ -1,12 +1,13 @@
 import React from 'react';
 import {View, Platform} from 'react-native';
 import StarRating from 'react-native-star-rating';
+
 const RatingBar = (props) => {
     return (
         <View style={[styles.container, props.style]}>
             <StarRating
                 disabled={props.disabled}
-                maxStars={props.maxStar}
+                maxStars={props.maxStars}
                 rating={props.rating}
                 emptyStar={Platform.OS === 'ios' ? 'ios-star-outline' : 'md-star-outline'}
                 fullStar={Platform.OS === 'ios' ? 'ios-star' : 'md-star'}

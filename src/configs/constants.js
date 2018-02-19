@@ -11,3 +11,7 @@ export const LOAD_NOW_PLAYING_MOVIE_FAIL = 'load_now_playing_movie_fail';
 export const LOAD_POPULAR_TV = 'load_popular_tv';
 export const LOAD_POPULAR_TV_SUCCESS = 'load_popular_tv_success';
 export const LOAD_POPULAR_TV_FAIL = 'load_popular_tv_fail';
+
+export const LOAD_AIRING_TODAY_TV = 'load_airing_today_tv';
+export const LOAD_AIRING_TODAY_TV_SUCCESS = 'load_airing_today_tv_success';
+export const LOAD_AIRING_TODAY_TV_FAIL = 'load_airing_today_fail';

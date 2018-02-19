@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {NavigationActions} from 'react-navigation';
-import {View, Text, StatusBar, SafeAreaView, ScrollView, TouchableWithoutFeedback, ActivityIndicator, Platform} from 'react-native';
+import {StatusBar, SafeAreaView, ScrollView, TouchableWithoutFeedback, Platform} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { LOAD_POPULAR_MOVIE } from '../configs/constants';
+import { LOAD_POPULAR_MOVIE, LOAD_NOW_PLAYING_MOVIE } from '../configs/constants';
 import ViewPagerPage from '../components/ViewPagerPage';
+import ListByCategory from '../components/ListByCategory';
 
 class MovieListScreen extends Component {
     static navigationOptions = ({navigation}) => {
@@ -34,6 +35,7 @@ class MovieListScreen extends Component {
     
     componentDidMount(){
         this.props.dispatch({type: LOAD_POPULAR_MOVIE});
+        this.props.dispatch({type: LOAD_NOW_PLAYING_MOVIE})
     }
 
     renderPopular() {
@@ -47,7 +49,14 @@ class MovieListScreen extends Component {
     }
 
     renderNowPlaying() {
-
+        return (
+            <ListByCategory
+                title={'Now Playing'}
+                loading={this.props.movie.loadingNowPlaying}
+                list={this.props.movie.nowPlaying}
+                navigation={this.props.navigation}                
+            />
+        );
     }
 
     render() {
@@ -58,7 +67,9 @@ class MovieListScreen extends Component {
                     backgroundColor='#1a1a1a'
                 />
 
-                <ScrollView style={{flex: 1}}>
+                <ScrollView 
+                    style={{flex: 1}}
+                >
                     {this.renderPopular()}
                     {this.renderNowPlaying()}
                 </ScrollView>

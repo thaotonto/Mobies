@@ -19,3 +19,7 @@ export async function fetchNowPlayingMovie () {
 export async function fetchPopularTV () {
     return fetchData('https://api.themoviedb.org/3/tv/popular?api_key=edf1f4d5b56b3b1d9454f2b090695246&language=en-US&page=1');
 }
+
+export async function fetchAiringTodayTV () {
+    return fetchData('https://api.themoviedb.org/3/tv/airing_today?api_key=edf1f4d5b56b3b1d9454f2b090695246&language=en-US&page=1');
+}

@@ -3,8 +3,10 @@ import {connect} from 'react-redux';
 import {NavigationActions} from 'react-navigation';
 import {View, Text, StatusBar, SafeAreaView, ScrollView, TouchableWithoutFeedback, ActivityIndicator, Platform} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { LOAD_POPULAR_TV } from '../configs/constants';
+import { LOAD_POPULAR_TV, LOAD_AIRING_TODAY_TV } from '../configs/constants';
 import ViewPagerPage from '../components/ViewPagerPage';
+import ListByCategory from '../components/ListByCategory';
+
 
 class TVListScreen extends Component {
     static navigationOptions = ({navigation}) => {
@@ -34,6 +36,7 @@ class TVListScreen extends Component {
     
     componentDidMount(){
         this.props.dispatch({type: LOAD_POPULAR_TV});
+        this.props.dispatch({type: LOAD_AIRING_TODAY_TV});
     }
 
     renderPopular() {
@@ -42,6 +45,17 @@ class TVListScreen extends Component {
                 loading={this.props.tv.loadingPopular}
                 list={this.props.tv.popular}
                 navigation={this.props.navigation}
+            />
+        );
+    }
+
+    renderAiringToday() {
+        return (
+            <ListByCategory
+                title={'airing today'}
+                loading={this.props.tv.loadingAiringToday}
+                list={this.props.tv.airingToday}
+                navigation={this.props.navigation}                
             />
         );
     }
@@ -56,6 +70,7 @@ class TVListScreen extends Component {
 
                 <ScrollView style={{flex: 1}}>
                     {this.renderPopular()}
+                    {this.renderAiringToday()}
                 </ScrollView>
 
             </SafeAreaView>

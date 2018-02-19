@@ -1,7 +1,8 @@
 import { LOAD_POPULAR_MOVIE_FAIL, LOAD_POPULAR_MOVIE_SUCCESS, LOAD_POPULAR_MOVIE, LOAD_NOW_PLAYING_MOVIE, LOAD_NOW_PLAYING_MOVIE_FAIL, LOAD_NOW_PLAYING_MOVIE_SUCCESS } from "../configs/constants";
 
 const INITIAL_STATE = {
-    loadingPopular: true
+    loadingPopular: true,
+    loadingNowPlaying: true
 }
 
 export default (state = INITIAL_STATE, action) => {
