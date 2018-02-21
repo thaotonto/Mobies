@@ -36,7 +36,7 @@ class ViewPagerPage extends Component {
                             }}
                         >
                             <LinearGradient 
-                                colors={['rgba(0,0,0,0)', 'rgba(0,0,0,1)']}
+                                colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.5)']}
                                 style={{justifyContent: 'flex-end', flex: 1}}>
                                 <View style={styles.titleStyle}>
                                     <Text style={styles.titleTextStyle}>{item.title ? item.title.toUpperCase() : item.name.toUpperCase()}</Text>

@@ -55,7 +55,8 @@ class TVListScreen extends Component {
                 title={'airing today'}
                 loading={this.props.tv.loadingAiringToday}
                 list={this.props.tv.airingToday}
-                navigation={this.props.navigation}                
+                navigation={this.props.navigation}   
+                itemWidth={161}                                           
             />
         );
     }

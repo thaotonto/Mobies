@@ -26,13 +26,13 @@ class ItemCategory extends React.PureComponent {
         return (
             <ImageBackground
                 source={{uri: imageLink}} 
-                style={{backgroundColor: '#424242', width: 145, height: 199, marginLeft: 8, marginRight: 8, marginTop: 16}}
+                style={[{backgroundColor: '#424242', width: 145, height: 199, marginLeft: 8, marginRight: 8, marginTop: 16}, this.props.style]}
             >
                 <TouchableWithoutFeedback
                     onPress={() => this.onItemClickDelay(item)}
                 >
                     <LinearGradient 
-                        colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.5)', 'rgba(0,0,0,1)']}
+                        colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.7)']}
                         style={{justifyContent: 'flex-end', flex: 1}}
                     >
                         <Text 

@@ -54,7 +54,8 @@ class MovieListScreen extends Component {
                 title={'Now Playing'}
                 loading={this.props.movie.loadingNowPlaying}
                 list={this.props.movie.nowPlaying}
-                navigation={this.props.navigation}                
+                navigation={this.props.navigation}  
+                itemWidth={161}              
             />
         );
     }

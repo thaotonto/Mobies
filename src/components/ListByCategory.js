@@ -16,8 +16,9 @@ class ListByCategory extends React.PureComponent {
         <ItemCategory
           item={item}
           navigation={this.props.navigation}
+          style={this.props.style}
         />
-      );
+    );
 
     render() {
         const {height, width} = Dimensions.get('window');        
@@ -26,18 +27,17 @@ class ListByCategory extends React.PureComponent {
                 <View>
                     <Text style={styles.headerStyle}>{this.props.title.toUpperCase()}</Text>
                     <Carousel
-                        horizontal
                         data={this.props.list.results}
                         renderItem={this._renderItem}
                         sliderWidth={width}
-                        extraData={this.state}
                         shouldOptimizeUpdates={true}
-                        itemWidth={161}
+                        itemWidth={this.props.itemWidth}
                         enableMomentum
                         loop={true}
                         activeSlideAlignment='start'
                         inactiveSlideScale={1}
                         inactiveSlideOpacity={1}
+                        firstItem={0}
                     />
                 </View>
             );

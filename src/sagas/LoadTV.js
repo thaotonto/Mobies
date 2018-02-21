@@ -1,4 +1,4 @@
-import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
+import { call, put, takeEvery, takeLatest, take } from 'redux-saga/effects';
 import { LOAD_POPULAR_TV_SUCCESS, LOAD_POPULAR_TV_FAIL, LOAD_AIRING_TODAY_TV_SUCCESS, LOAD_AIRING_TODAY_TV_FAIL } from '../configs/constants';
 import { fetchPopularTV, fetchAiringTodayTV } from '../networks/fetchData';
 

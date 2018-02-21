@@ -1,4 +1,4 @@
-import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
+import { call, put, takeEvery, takeLatest, take } from 'redux-saga/effects';
 import { LOAD_POPULAR_MOVIE_FAIL, LOAD_POPULAR_MOVIE_SUCCESS, LOAD_NOW_PLAYING_MOVIE_SUCCESS, LOAD_NOW_PLAYING_MOVIE_FAIL } from '../configs/constants';
 import { fetchPopularMovie, fetchNowPlayingMovie } from '../networks/fetchData';
 
