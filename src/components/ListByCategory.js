@@ -24,7 +24,7 @@ class ListByCategory extends React.PureComponent {
         const {height, width} = Dimensions.get('window');        
         if (!this.props.loading)
             return(
-                <View>
+                <View style={{marginBottom: 16}}>
                     <Text style={styles.headerStyle}>{this.props.title.toUpperCase()}</Text>
                     <Carousel
                         data={this.props.list.results}

@@ -1,8 +1,10 @@
-import { LOAD_POPULAR_TV_FAIL, LOAD_POPULAR_TV_SUCCESS, LOAD_POPULAR_TV, LOAD_AIRING_TODAY_TV, LOAD_AIRING_TODAY_TV_FAIL, LOAD_AIRING_TODAY_TV_SUCCESS } from "../configs/constants";
+import { LOAD_POPULAR_TV_FAIL, LOAD_POPULAR_TV_SUCCESS, LOAD_POPULAR_TV, LOAD_AIRING_TODAY_TV, LOAD_AIRING_TODAY_TV_FAIL, LOAD_AIRING_TODAY_TV_SUCCESS, LOAD_ON_AIR_TV, LOAD_ON_AIR_TV_FAIL, LOAD_ON_AIR_TV_SUCCESS, LOAD_TOP_RATED_TV, LOAD_TOP_RATED_TV_FAIL, LOAD_TOP_RATED_TV_SUCCESS } from "../configs/constants";
 
 const INITIAL_STATE = {
     loadingPopular: true,
-    loadingAiringToday: true
+    loadingAiringToday: true,
+    loadingTopRated: true,
+    loadingOnAir: true
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -19,6 +21,18 @@ export default (state = INITIAL_STATE, action) => {
             return {...state, loadingAiringToday: false};
         case LOAD_AIRING_TODAY_TV_SUCCESS: 
             return {...state, loadingAiringToday: false, airingToday: action.payload};
+        case LOAD_ON_AIR_TV:
+            return {...state, loadingOnAir: true};
+        case LOAD_ON_AIR_TV_FAIL: 
+            return {...state, loadingOnAir: false};
+        case LOAD_ON_AIR_TV_SUCCESS: 
+            return {...state, loadingOnAir: false, onAir: action.payload};
+        case LOAD_TOP_RATED_TV:
+            return {...state, loadingTopRated: true};
+        case LOAD_TOP_RATED_TV_FAIL: 
+            return {...state, loadingTopRated: false};
+        case LOAD_TOP_RATED_TV_SUCCESS: 
+            return {...state, loadingTopRated: false, topRated: action.payload};
         default:
             return state;
     }

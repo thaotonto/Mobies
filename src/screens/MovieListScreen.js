@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {NavigationActions} from 'react-navigation';
 import {StatusBar, SafeAreaView, ScrollView, TouchableWithoutFeedback, Platform} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { LOAD_POPULAR_MOVIE, LOAD_NOW_PLAYING_MOVIE } from '../configs/constants';
+import { LOAD_POPULAR_MOVIE, LOAD_NOW_PLAYING_MOVIE, LOAD_COMING_SOON_MOVIE, LOAD_TOP_RATED_MOVIE } from '../configs/constants';
 import ViewPagerPage from '../components/ViewPagerPage';
 import ListByCategory from '../components/ListByCategory';
 
@@ -35,7 +35,9 @@ class MovieListScreen extends Component {
     
     componentDidMount(){
         this.props.dispatch({type: LOAD_POPULAR_MOVIE});
-        this.props.dispatch({type: LOAD_NOW_PLAYING_MOVIE})
+        this.props.dispatch({type: LOAD_NOW_PLAYING_MOVIE});
+        this.props.dispatch({type: LOAD_COMING_SOON_MOVIE});
+        this.props.dispatch({type: LOAD_TOP_RATED_MOVIE});        
     }
 
     renderPopular() {
@@ -60,6 +62,30 @@ class MovieListScreen extends Component {
         );
     }
 
+    renderComingSoon() {
+        return (
+            <ListByCategory
+                title={'coming soon'}
+                loading={this.props.movie.loadingComingSoon}
+                list={this.props.movie.comingSoon}
+                navigation={this.props.navigation}  
+                itemWidth={161}              
+            />
+        );
+    }
+
+    renderTopRated() {
+        return (
+            <ListByCategory
+                title={'top rated'}
+                loading={this.props.movie.loadingTopRated}
+                list={this.props.movie.topRated}
+                navigation={this.props.navigation}  
+                itemWidth={161}              
+            />
+        );
+    }
+
     render() {
         return (
             <SafeAreaView style={styles.container}>
@@ -73,6 +99,8 @@ class MovieListScreen extends Component {
                 >
                     {this.renderPopular()}
                     {this.renderNowPlaying()}
+                    {this.renderComingSoon()}
+                    {this.renderTopRated()}
                 </ScrollView>
 
             </SafeAreaView>

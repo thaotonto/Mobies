@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {NavigationActions} from 'react-navigation';
 import {View, Text, StatusBar, SafeAreaView, ScrollView, TouchableWithoutFeedback, ActivityIndicator, Platform} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { LOAD_POPULAR_TV, LOAD_AIRING_TODAY_TV } from '../configs/constants';
+import { LOAD_POPULAR_TV, LOAD_AIRING_TODAY_TV, LOAD_ON_AIR_TV, LOAD_TOP_RATED_TV } from '../configs/constants';
 import ViewPagerPage from '../components/ViewPagerPage';
 import ListByCategory from '../components/ListByCategory';
 
@@ -37,6 +37,8 @@ class TVListScreen extends Component {
     componentDidMount(){
         this.props.dispatch({type: LOAD_POPULAR_TV});
         this.props.dispatch({type: LOAD_AIRING_TODAY_TV});
+        this.props.dispatch({type: LOAD_ON_AIR_TV});
+        this.props.dispatch({type: LOAD_TOP_RATED_TV});        
     }
 
     renderPopular() {
@@ -61,6 +63,30 @@ class TVListScreen extends Component {
         );
     }
 
+    renderOnAir() {
+        return (
+            <ListByCategory
+                title={'on air'}
+                loading={this.props.tv.loadingOnAir}
+                list={this.props.tv.onAir}
+                navigation={this.props.navigation}  
+                itemWidth={161}              
+            />
+        );
+    }
+
+    renderTopRated() {
+        return (
+            <ListByCategory
+                title={'top rated'}
+                loading={this.props.tv.loadingTopRated}
+                list={this.props.tv.topRated}
+                navigation={this.props.navigation}  
+                itemWidth={161}              
+            />
+        );
+    }
+
     render() {
         return (
             <SafeAreaView style={styles.container}>
@@ -72,6 +98,8 @@ class TVListScreen extends Component {
                 <ScrollView style={{flex: 1}}>
                     {this.renderPopular()}
                     {this.renderAiringToday()}
+                    {this.renderOnAir()}
+                    {this.renderTopRated()}
                 </ScrollView>
 
             </SafeAreaView>

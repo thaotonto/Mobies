@@ -85,7 +85,7 @@ const styles = {
     viewPagerStyle: {
         height: 200,
         marginTop: 8,
-        marginBottom: 8,
+        marginBottom: 16,
         marginLeft: Platform.OS === 'ios' ? 0 : 8,
         marginRight: Platform.OS === 'ios' ? 0 : 8,
         paddingRight: Platform.OS === 'ios' ? 8 : 0,
