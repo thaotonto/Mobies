@@ -40,6 +40,14 @@ export async function fetchOnAirTV () {
     return fetchData('https://api.themoviedb.org/3/tv/on_the_air?api_key=edf1f4d5b56b3b1d9454f2b090695246&language=en-US&page=1');
 }
 
+export async function fetchMovieGenres() {
+    return fetchData('https://api.themoviedb.org/3/genre/movie/list?api_key=edf1f4d5b56b3b1d9454f2b090695246&language=en-US');
+}
+
+export async function fetchTVGenres() {
+    return fetchData('https://api.themoviedb.org/3/genre/tv/list?api_key=edf1f4d5b56b3b1d9454f2b090695246&language=en-US');
+}
+
 export async function fetchDetail(url) {
     return fetchData(url);
 }

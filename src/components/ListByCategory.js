@@ -33,7 +33,7 @@ class ListByCategory extends React.PureComponent {
                         shouldOptimizeUpdates={true}
                         itemWidth={this.props.itemWidth}
                         enableMomentum
-                        loop={true}
+                        // loop={true}
                         activeSlideAlignment='start'
                         inactiveSlideScale={1}
                         inactiveSlideOpacity={1}

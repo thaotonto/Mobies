@@ -130,6 +130,7 @@ class DetailScreen extends Component {
                     barStyle='light-content'
                     backgroundColor='#1a1a1a'
                 />
+                <View style={styles.iosHeader} />
                 <ScrollView style={{flex: 1}} > 
                     <Header
                         navigation={this.props.navigation}
@@ -208,6 +209,10 @@ const styles = {
         fontSize: 14,
         color: '#a8a8a8',
         marginTop: 16
+    },
+    iosHeader: {
+        height: Platform.OS === 'ios' ? 20 : 0,
+        backgroundColor: '#1a1a1a'
     }
 };
 

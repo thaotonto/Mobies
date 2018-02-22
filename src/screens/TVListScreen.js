@@ -3,10 +3,10 @@ import {connect} from 'react-redux';
 import {NavigationActions} from 'react-navigation';
 import {View, Text, StatusBar, SafeAreaView, ScrollView, TouchableWithoutFeedback, ActivityIndicator, Platform} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { LOAD_POPULAR_TV, LOAD_AIRING_TODAY_TV, LOAD_ON_AIR_TV, LOAD_TOP_RATED_TV } from '../configs/constants';
+import { LOAD_POPULAR_TV, LOAD_AIRING_TODAY_TV, LOAD_ON_AIR_TV, LOAD_TOP_RATED_TV, LOAD_GENRE_TV } from '../configs/constants';
 import ViewPagerPage from '../components/ViewPagerPage';
 import ListByCategory from '../components/ListByCategory';
-
+import ListByGenre from '../components/ListByGenre';
 
 class TVListScreen extends Component {
     static navigationOptions = ({navigation}) => {
@@ -35,6 +35,7 @@ class TVListScreen extends Component {
     }}
     
     componentDidMount(){
+        this.props.dispatch({type: LOAD_GENRE_TV});        
         this.props.dispatch({type: LOAD_POPULAR_TV});
         this.props.dispatch({type: LOAD_AIRING_TODAY_TV});
         this.props.dispatch({type: LOAD_ON_AIR_TV});
@@ -87,6 +88,19 @@ class TVListScreen extends Component {
         );
     }
 
+    renderGenres() {
+        return (
+            <ListByGenre
+                type='tv'
+                list={this.props.tv.genres}
+                loading={this.props.tv.loadingGenre}
+                selectedGenre={this.props.tv.selectedGenre}
+                navigation={this.props.navigation}  
+                dispatch={this.props.dispatch}
+            />
+        )
+    }
+
     render() {
         return (
             <SafeAreaView style={styles.container}>
@@ -97,6 +111,7 @@ class TVListScreen extends Component {
 
                 <ScrollView style={{flex: 1}}>
                     {this.renderPopular()}
+                    {this.renderGenres()}
                     {this.renderAiringToday()}
                     {this.renderOnAir()}
                     {this.renderTopRated()}

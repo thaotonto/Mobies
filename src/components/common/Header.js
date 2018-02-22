@@ -9,7 +9,7 @@ class Header extends React.Component {
         imageLink = 'https://image.tmdb.org/t/p/w500' + item.backdrop_path;
         return (
             <View>
-                <View style={styles.iosHeader} />
+                
                 <ImageBackground
                     source={{uri: imageLink}}
                     style={{width: null, height: 199}}
@@ -26,13 +26,6 @@ class Header extends React.Component {
                 </ImageBackground>
             </View>
         );
-    }
-}
-
-const styles = {
-    iosHeader: {
-        height: Platform.OS === 'ios' ? 20 : 0,
-        backgroundColor: '#1a1a1a'
     }
 }
 

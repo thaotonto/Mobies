@@ -3,9 +3,10 @@ import {connect} from 'react-redux';
 import {NavigationActions} from 'react-navigation';
 import {StatusBar, SafeAreaView, ScrollView, TouchableWithoutFeedback, Platform} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { LOAD_POPULAR_MOVIE, LOAD_NOW_PLAYING_MOVIE, LOAD_COMING_SOON_MOVIE, LOAD_TOP_RATED_MOVIE } from '../configs/constants';
+import { LOAD_POPULAR_MOVIE, LOAD_NOW_PLAYING_MOVIE, LOAD_COMING_SOON_MOVIE, LOAD_TOP_RATED_MOVIE, LOAD_GENRE_MOVIE } from '../configs/constants';
 import ViewPagerPage from '../components/ViewPagerPage';
 import ListByCategory from '../components/ListByCategory';
+import ListByGenre from '../components/ListByGenre';
 
 class MovieListScreen extends Component {
     static navigationOptions = ({navigation}) => {
@@ -34,6 +35,7 @@ class MovieListScreen extends Component {
     }}
     
     componentDidMount(){
+        this.props.dispatch({type: LOAD_GENRE_MOVIE});
         this.props.dispatch({type: LOAD_POPULAR_MOVIE});
         this.props.dispatch({type: LOAD_NOW_PLAYING_MOVIE});
         this.props.dispatch({type: LOAD_COMING_SOON_MOVIE});
@@ -86,6 +88,19 @@ class MovieListScreen extends Component {
         );
     }
 
+    renderGenres() {
+        return (
+            <ListByGenre
+                type='movie'
+                list={this.props.movie.genres}
+                loading={this.props.movie.loadingGenre}
+                selectedGenre={this.props.movie.selectedGenre}
+                dispatch={this.props.dispatch}
+                navigation={this.props.navigation}  
+            />
+        )
+    }
+
     render() {
         return (
             <SafeAreaView style={styles.container}>
@@ -98,6 +113,7 @@ class MovieListScreen extends Component {
                     style={{flex: 1}}
                 >
                     {this.renderPopular()}
+                    {this.renderGenres()}
                     {this.renderNowPlaying()}
                     {this.renderComingSoon()}
                     {this.renderTopRated()}
