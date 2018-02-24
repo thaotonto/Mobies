@@ -10,7 +10,7 @@ class ListByGenre extends React.Component {
     //     selectedItem: undefined
     // }
 
-    _keyExtractor = (item, index) => item.id;
+    _keyExtractor = (item, index) => item.id.toString();
 
     _onPressItem = (id) => {
         if (this.props.selectedGenre != id) {

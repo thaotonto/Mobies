@@ -187,7 +187,7 @@ const styles = {
     },
     DetailInfo: {
         marginTop: 16,
-        marginRight: 60,
+        marginRight: 70,
         marginLeft: 142
     },
     ActionButtonStyle: {

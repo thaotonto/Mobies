@@ -9,7 +9,7 @@
   "dependencies": {
     "lodash": "^4.17.5",
     "react": "16.2.0",
-    "react-native": "0.52.2",
+    "react-native": "^0.53.3",
     "react-native-action-button": "^2.8.4",
     "react-native-linear-gradient": "^2.4.0",
     "react-native-snap-carousel": "^3.6.0",
