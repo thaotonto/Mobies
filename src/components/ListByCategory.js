@@ -27,7 +27,7 @@ class ListByCategory extends React.PureComponent {
                 <View style={{marginBottom: 16}}>
                     <Text style={styles.headerStyle}>{this.props.title.toUpperCase()}</Text>
                     <Carousel
-                        data={this.props.list.results}
+                        data={this.props.isObject ? this.props.list : this.props.list.results}
                         renderItem={this._renderItem}
                         sliderWidth={width}
                         shouldOptimizeUpdates={true}
@@ -52,6 +52,10 @@ const styles = {
         marginLeft: 8,
         color: 'white'
     }
+}
+
+ListByCategory.defaultProps = {
+    isObject: false
 }
 
 export default ListByCategory;

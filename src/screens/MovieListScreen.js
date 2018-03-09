@@ -43,62 +43,72 @@ class MovieListScreen extends Component {
     }
 
     renderPopular() {
-        return (
-            <ViewPagerPage 
-                loading={this.props.movie.loadingPopular}
-                list={this.props.movie.popular}
-                navigation={this.props.navigation}
-            />
-        );    
+        if(!this.props.movie.errorPopular)
+            return (
+                <ViewPagerPage 
+                    loading={this.props.movie.loadingPopular}
+                    list={this.props.movie.popular}
+                    navigation={this.props.navigation}
+                />
+            );    
+        else return null;
     }
 
     renderNowPlaying() {
-        return (
-            <ListByCategory
-                title={'Now Playing'}
-                loading={this.props.movie.loadingNowPlaying}
-                list={this.props.movie.nowPlaying}
-                navigation={this.props.navigation}  
-                itemWidth={161}              
-            />
-        );
+        if(!this.props.movie.errorNowPlaying)
+            return (
+                <ListByCategory
+                    title={'Now Playing'}
+                    loading={this.props.movie.loadingNowPlaying}
+                    list={this.props.movie.nowPlaying}
+                    navigation={this.props.navigation}  
+                    itemWidth={161}              
+                />
+            );
+        else return null;
     }
 
     renderComingSoon() {
-        return (
-            <ListByCategory
-                title={'coming soon'}
-                loading={this.props.movie.loadingComingSoon}
-                list={this.props.movie.comingSoon}
-                navigation={this.props.navigation}  
-                itemWidth={161}              
-            />
-        );
+        if(!this.props.movie.errorComingSoon)
+            return (
+                <ListByCategory
+                    title={'coming soon'}
+                    loading={this.props.movie.loadingComingSoon}
+                    list={this.props.movie.comingSoon}
+                    navigation={this.props.navigation}  
+                    itemWidth={161}              
+                />
+            );
+        else return null;
     }
 
     renderTopRated() {
-        return (
-            <ListByCategory
-                title={'top rated'}
-                loading={this.props.movie.loadingTopRated}
-                list={this.props.movie.topRated}
-                navigation={this.props.navigation}  
-                itemWidth={161}              
-            />
-        );
+        if(!this.props.movie.errorTopRated)
+            return (
+                <ListByCategory
+                    title={'top rated'}
+                    loading={this.props.movie.loadingTopRated}
+                    list={this.props.movie.topRated}
+                    navigation={this.props.navigation}  
+                    itemWidth={161}              
+                />
+            );
+        else return null;
     }
 
     renderGenres() {
-        return (
-            <ListByGenre
-                type='movie'
-                list={this.props.movie.genres}
-                loading={this.props.movie.loadingGenre}
-                selectedGenre={this.props.movie.selectedGenre}
-                dispatch={this.props.dispatch}
-                navigation={this.props.navigation}  
-            />
-        )
+        if(!this.props.movie.errorGenres)
+            return (
+                <ListByGenre
+                    type='movie'
+                    list={this.props.movie.genres}
+                    loading={this.props.movie.loadingGenre}
+                    selectedGenre={this.props.movie.selectedGenre}
+                    dispatch={this.props.dispatch}
+                    navigation={this.props.navigation}  
+                />
+            );
+        else return null;        
     }
 
     render() {

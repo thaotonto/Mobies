@@ -25,6 +25,7 @@ class ItemCategory extends React.PureComponent {
         imageLink = 'https://image.tmdb.org/t/p/w500' + item.poster_path;
         return (
             <ImageBackground
+                defaultSource={require('../../../assets/no_image_movie_tv_portrait_final.png')}            
                 source={{uri: imageLink}} 
                 style={[{backgroundColor: '#424242', width: 145, height: 199, marginLeft: 8, marginRight: 8, marginTop: 16}, this.props.style]}
             >

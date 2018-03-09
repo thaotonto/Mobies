@@ -9,6 +9,7 @@ import CustomDrawerContentComponent from '../components/CustomDrawerContentCompo
 import DetailScreen from './DetailScreen';
 import MovieListScreen from './MovieListScreen';
 import TVListScreen from './TVListScreen';
+import PeopleListScreen from './PeopleListScreen';
 
 //---------------------------------------
 const MovieListStack = StackNavigator({
@@ -29,12 +30,24 @@ const TVListStack = StackNavigator({
     }
 });
 
+const PeopleListStack = StackNavigator({
+    PeopleList: {
+        screen: PeopleListScreen
+    },
+    Detail: {
+        screen: DetailScreen
+    }
+});
+
 export const AppNavigator = DrawerNavigator({
     MovieListNavigator: {
         screen: MovieListStack, 
     },
     TVListNavigator: {
         screen: TVListStack
+    },
+    PeopleListNavigator: {
+        screen: PeopleListStack
     }
 },
 {   

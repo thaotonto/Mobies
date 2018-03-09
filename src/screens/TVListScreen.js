@@ -43,62 +43,72 @@ class TVListScreen extends Component {
     }
 
     renderPopular() {
-        return (
-            <ViewPagerPage 
-                loading={this.props.tv.loadingPopular}
-                list={this.props.tv.popular}
-                navigation={this.props.navigation}
-            />
-        );
+        if(!this.props.tv.errorPopular)
+            return (
+                <ViewPagerPage 
+                    loading={this.props.tv.loadingPopular}
+                    list={this.props.tv.popular}
+                    navigation={this.props.navigation}
+                />
+            );
+        else return null;
     }
 
     renderAiringToday() {
-        return (
-            <ListByCategory
-                title={'airing today'}
-                loading={this.props.tv.loadingAiringToday}
-                list={this.props.tv.airingToday}
-                navigation={this.props.navigation}   
-                itemWidth={161}                                           
-            />
-        );
+        if(!this.props.tv.errorAiringToday)
+            return (
+                <ListByCategory
+                    title={'airing today'}
+                    loading={this.props.tv.loadingAiringToday}
+                    list={this.props.tv.airingToday}
+                    navigation={this.props.navigation}   
+                    itemWidth={161}                                           
+                />
+            );
+        else return null;
     }
 
     renderOnAir() {
-        return (
-            <ListByCategory
-                title={'on air'}
-                loading={this.props.tv.loadingOnAir}
-                list={this.props.tv.onAir}
-                navigation={this.props.navigation}  
-                itemWidth={161}              
-            />
-        );
+        if(!this.props.tv.errorOnAir)
+            return (
+                <ListByCategory
+                    title={'on air'}
+                    loading={this.props.tv.loadingOnAir}
+                    list={this.props.tv.onAir}
+                    navigation={this.props.navigation}  
+                    itemWidth={161}              
+                />
+            );
+        else return null;
     }
 
     renderTopRated() {
-        return (
-            <ListByCategory
-                title={'top rated'}
-                loading={this.props.tv.loadingTopRated}
-                list={this.props.tv.topRated}
-                navigation={this.props.navigation}  
-                itemWidth={161}              
-            />
-        );
+        if(!this.props.tv.errorTopRated)
+            return (
+                <ListByCategory
+                    title={'top rated'}
+                    loading={this.props.tv.loadingTopRated}
+                    list={this.props.tv.topRated}
+                    navigation={this.props.navigation}  
+                    itemWidth={161}              
+                />
+            );
+        else return null;
     }
 
     renderGenres() {
-        return (
-            <ListByGenre
-                type='tv'
-                list={this.props.tv.genres}
-                loading={this.props.tv.loadingGenre}
-                selectedGenre={this.props.tv.selectedGenre}
-                navigation={this.props.navigation}  
-                dispatch={this.props.dispatch}
-            />
-        )
+        if(!this.props.tv.errorGenres)
+            return (
+                <ListByGenre
+                    type='tv'
+                    list={this.props.tv.genres}
+                    loading={this.props.tv.loadingGenre}
+                    selectedGenre={this.props.tv.selectedGenre}
+                    navigation={this.props.navigation}  
+                    dispatch={this.props.dispatch}
+                />
+            );
+        else return null;
     }
 
     render() {

@@ -51,3 +51,9 @@ export const TV_GENRE_SELECTED = 'tv_genre_selected';
 export const LOAD_TV_BY_GENRE = 'load_tv_by_genre';
 export const LOAD_TV_BY_GENRE_FAIL = 'load_tv_by_genre_fail';
 export const LOAD_TV_BY_GENRE_SUCCESS = 'load_tv_by_genre_success';
+
+//_____________________________PEOPLE_____________________________
+export const LOAD_PEOPLE = 'load_people';
+export const LOAD_PEOPLE_SUCCESS = 'load_people_success';
+export const LOAD_PEOPLE_FAIL = 'load_people_fail';
+export const LOAD_PEOPLE_SUCCESS_MORE = 'load_people_success_more';
