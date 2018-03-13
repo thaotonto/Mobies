@@ -1,19 +1,50 @@
 import React, {Component} from 'react';
 import {NavigationActions} from 'react-navigation';
-import {View, Text, ScrollView, StatusBar, Platform, ImageBackground, Dimensions, Image, TouchableOpacity} from 'react-native';
-import {Header, RatingBar, InfoSection} from '../components/common';
+import {View, Text, ScrollView, StatusBar, Platform, ImageBackground, Dimensions, Image, TouchableOpacity, Animated, TouchableWithoutFeedback} from 'react-native';
+import {RatingBar, InfoSection} from '../components/common';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { fetchDetail } from '../networks/fetchData';
 import _ from 'lodash';
 import ListByCategory from '../components/ListByCategory';
+import LinearGradient from 'react-native-linear-gradient';
+
+const STATUS_BAR_HEIGHT = Platform.select({ ios: 20, android: 0 });
+const NAVBAR_HEIGHT = Platform.OS === 'ios' ? STATUS_BAR_HEIGHT + 44 : 58;
+const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);
+const AnimatedIcon = Animated.createAnimatedComponent(Icon);
+
 
 class DetailScreen extends Component {
-    state = {
-        detail: '',
-        cast: '',
-        similar: '',
-        person: ''
+    constructor(props) {
+        super(props);        
+        const scrollAnim = new Animated.Value(0);
+        const offsetAnim = new Animated.Value(0);
+    
+        this.state = {
+            scrollAnim,
+            offsetAnim,
+            clampedScroll: Animated.diffClamp(
+                Animated.add(
+                scrollAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, 1],
+                    extrapolateLeft: 'clamp',
+                }),
+                offsetAnim,
+                ),
+                0,
+                NAVBAR_HEIGHT - STATUS_BAR_HEIGHT,
+            ),
+            detail: '',
+            cast: '',
+            similar: '',
+            person: ''  
+        };
     }
+
+    _clampedScrollValue = 0;
+    _offsetValue = 0;
+    _scrollValue = 0;
 
     static navigationOptions = ({navigation}) => {
         return {
@@ -22,7 +53,45 @@ class DetailScreen extends Component {
         }
     }
 
+    componentWillUnmount() {
+        this.state.scrollAnim.removeAllListeners();
+        this.state.offsetAnim.removeAllListeners();
+    }
+
+    _onScrollEndDrag = () => {
+        this._scrollEndTimer = setTimeout(this._onMomentumScrollEnd, 250);
+    };
+    
+    _onMomentumScrollBegin = () => {
+        clearTimeout(this._scrollEndTimer);
+    };
+    
+    _onMomentumScrollEnd = () => {
+        const toValue = this._scrollValue > NAVBAR_HEIGHT &&
+            this._clampedScrollValue > (NAVBAR_HEIGHT - STATUS_BAR_HEIGHT) / 2
+            ? this._offsetValue + NAVBAR_HEIGHT
+            : this._offsetValue - NAVBAR_HEIGHT;
+
+        Animated.timing(this.state.offsetAnim, {
+            toValue,
+            duration: 350,
+            useNativeDriver: true,
+        }).start();
+    };
+
     componentDidMount() {
+        this.state.scrollAnim.addListener(({ value }) => {
+            const diff = value - this._scrollValue;
+            this._scrollValue = value;
+            this._clampedScrollValue = Math.min(
+              Math.max(this._clampedScrollValue + diff, 0),
+              NAVBAR_HEIGHT - STATUS_BAR_HEIGHT,
+            );
+        });
+        this.state.offsetAnim.addListener(({ value }) => {
+        this._offsetValue = value;
+        });
+
         const { item } = this.props.navigation.state.params;
         if (item.title) {
             fetchDetail(`https://api.themoviedb.org/3/movie/${item.id}?api_key=edf1f4d5b56b3b1d9454f2b090695246&language=en-US`).then((detail) => {
@@ -150,11 +219,12 @@ class DetailScreen extends Component {
             return (
                 <InfoSection
                     title='Also Known As'
+                    childDirection='column'
                 >
                 {this.state.person.also_known_as.length == 0 ? <Text style={styles.InfoSectionStyle}>-</Text> :
                     _.map(this.state.person.also_known_as).map((name, index) => {
                         return (
-                            <Text key={index} style={styles.InfoSectionStyle}>{index=== 0 ? name : `, ${name}`}</Text>
+                            <Text key={index} style={[styles.InfoSectionStyle, {marginTop: index != 0 ? 0 : 16, alignSelf: 'flex-start'}]}>{`${name}`}</Text>
                         );
                     })                          
                 }
@@ -187,7 +257,21 @@ class DetailScreen extends Component {
     }
 
     render() {
+        const { clampedScroll } = this.state;
+
+        const navbarTranslate = clampedScroll.interpolate({
+            inputRange: [0, NAVBAR_HEIGHT - STATUS_BAR_HEIGHT],
+            outputRange: [0, -(NAVBAR_HEIGHT - STATUS_BAR_HEIGHT)],
+            extrapolate: 'clamp',
+        });
+        const navbarOpacity = clampedScroll.interpolate({
+            inputRange: [0, NAVBAR_HEIGHT - STATUS_BAR_HEIGHT],
+            outputRange: [1, 0],
+            extrapolate: 'clamp',
+        });
+
         const { item } = this.props.navigation.state.params;
+        backDropLink = item.profile_path ? 'https://image.tmdb.org/t/p/w500' + item.known_for[0].backdrop_path : 'https://image.tmdb.org/t/p/w500' + item.backdrop_path;
         imageLink = item.profile_path ? 'https://image.tmdb.org/t/p/w500' + item.profile_path : 'https://image.tmdb.org/t/p/w500' + item.poster_path;
         return (
             <View style={styles.container}>
@@ -195,16 +279,36 @@ class DetailScreen extends Component {
                     barStyle='light-content'
                     backgroundColor='#1a1a1a'
                 />
-                <View style={styles.iosHeader} />
-                <ScrollView style={{flex: 1}} > 
-                    <Header
-                        navigation={this.props.navigation}
-                        item={item.profile_path ? item.known_for[0] : item}
-                    />
+
+                <AnimatedScrollView
+                    scrollEventThrottle={1}
+                    onMomentumScrollBegin={this._onMomentumScrollBegin}
+                    onMomentumScrollEnd={this._onMomentumScrollEnd}
+                    onScrollEndDrag={this._onScrollEndDrag}
+                    onScroll={Animated.event(
+                        [{ nativeEvent: { contentOffset: { y: this.state.scrollAnim } } }],
+                        { useNativeDriver: true },
+                    )}
+                >
+                    <ImageBackground
+                        defaultSource={require('../../assets/no_image_movie_tv_landscape_final.png')}                                                                                                      
+                        source={{uri: backDropLink}}
+                        style={{width: null, height: 199, marginTop: NAVBAR_HEIGHT}}
+                        resizeMode='cover'                               
+                    >
+                        <LinearGradient 
+                            colors={['rgba(0,0,0,0.5)', 'rgba(0,0,0,0)']}
+                            style={{justifyContent: 'flex-start', height: 70}}>
+                        </LinearGradient>
+                    </ImageBackground>
+
                     <Image
+                        defaultSource={require('../../assets/no_image_movie_tv_portrait_final.png')}  
                         source={{uri: imageLink}}
+                        resizeMode='cover'                               
                         style={styles.PosterStyle}
                     />
+
                     {item.profile_path ? null : 
                         <View style={styles.DetailInfo}>
                             <Text style={{fontWeight: 'bold', color: 'white', fontSize: 16}} >{item.title ? item.title.toUpperCase() : item.name.toUpperCase()}</Text>
@@ -236,7 +340,16 @@ class DetailScreen extends Component {
                     {item.profile_path ? this.renderBioGraphy() : this.renderStoryline()}
                     {item.profile_path ? this.renderKnownFor() : this.renderSimilar()}
                     {item.profile_path ? null : this.renderCast()}
-                </ScrollView>
+                </AnimatedScrollView>
+
+                <Animated.View style={[styles.navbar, { transform: [{ translateY: navbarTranslate }] }]}>
+                    <TouchableWithoutFeedback
+                        onPress={() => this.props.navigation.goBack()}
+                    >
+                        <AnimatedIcon name= {Platform.OS === 'ios' ? "ios-arrow-back" : "md-arrow-back"} size={30} color="#fff" style={{marginLeft: 10, opacity: navbarOpacity }}></AnimatedIcon>
+                    </TouchableWithoutFeedback>
+                </Animated.View>
+                
             </View>
         );
     }
@@ -250,7 +363,7 @@ const styles = {
     PosterStyle: {
         width: 110,
         height: 160,
-        top: 173,
+        top: 158 + NAVBAR_HEIGHT,
         left: 16,
         position: 'absolute',        
     },
@@ -267,7 +380,7 @@ const styles = {
         borderRadius: 30,            
         backgroundColor: '#ff9900',                                    
         position: 'absolute',                                          
-        top: Platform.OS === 'ios' ? 172 : 165,                                                    
+        top: Platform.OS === 'ios' ? 172 + NAVBAR_HEIGHT : 170 + NAVBAR_HEIGHT,                                                    
         right: 8, 
     },
     InfoSectionHeaderStyle: {
@@ -277,11 +390,20 @@ const styles = {
     InfoSectionStyle: {
         fontSize: 14,
         color: '#a8a8a8',
-        marginTop: 16
+        marginTop: 16,
     },
-    iosHeader: {
-        height: Platform.OS === 'ios' ? 20 : 0,
-        backgroundColor: '#1a1a1a'
+    navbar: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        backgroundColor: '#212121',
+        height: NAVBAR_HEIGHT,
+        justifyContent: 'center',
+        paddingTop: STATUS_BAR_HEIGHT,
+    },
+    contentContainer: {
+        paddingTop: NAVBAR_HEIGHT,
     }
 };
 

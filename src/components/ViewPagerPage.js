@@ -30,6 +30,7 @@ class ViewPagerPage extends Component {
                         defaultSource={require('../../assets/no_image_movie_tv_landscape_final.png')}                        
                         source={{uri: imageLink}} 
                         style={{backgroundColor: 'transparent', width: null, height: 199}}
+                        resizeMode='cover'
                     >
                         <TouchableWithoutFeedback
                             onPress={() => {
