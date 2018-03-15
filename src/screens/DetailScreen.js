@@ -14,7 +14,6 @@ const NAVBAR_HEIGHT = Platform.OS === 'ios' ? STATUS_BAR_HEIGHT + 44 : 58;
 const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 
-
 class DetailScreen extends Component {
     constructor(props) {
         super(props);        

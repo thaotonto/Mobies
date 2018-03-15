@@ -35,6 +35,7 @@ class FullCast extends React.Component {
                     <MaterialIcons name="search" size={30} color="#fff" style={{marginRight: 10}}></MaterialIcons>                
                 </TouchableWithoutFeedback>
             ),
+            drawerLockMode: 'locked-closed'            
     }}
 
     _keyExtractor = (item, index) => item.credit_id;    
