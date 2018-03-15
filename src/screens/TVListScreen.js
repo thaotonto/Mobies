@@ -7,9 +7,20 @@ import { LOAD_POPULAR_TV, LOAD_AIRING_TODAY_TV, LOAD_ON_AIR_TV, LOAD_TOP_RATED_T
 import ViewPagerPage from '../components/ViewPagerPage';
 import ListByCategory from '../components/ListByCategory';
 import ListByGenre from '../components/ListByGenre';
+import _ from 'lodash';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 class TVListScreen extends Component {
     static navigationOptions = ({navigation}) => {
+        var debounce = _.debounce(navigateSearch, 1000, {
+            leading: true,
+            trailing: false
+        })
+
+        function navigateSearch() {
+            navigation.navigate('Search');
+        }
+
         return {
             headerMode: 'screen',
             headerBackTitle: null,
@@ -24,13 +35,22 @@ class TVListScreen extends Component {
             drawerLabel: 'TV Shows',
             headerLeft: (
                 <TouchableWithoutFeedback
-                    onPress={() => {navigation.navigate('DrawerToggle')}}
+                    onPress={() => {navigation.navigate('DrawerOpen')}}
                 >
                     <Icon name="menu" size={30} color="#fff" style={{marginLeft: 10}}></Icon>
                 </TouchableWithoutFeedback>
             ),
             drawerIcon: ({ tintColor }) => (
                 <Icon name="television-classic" size={24} color="#fff" ></Icon>
+            ),
+            headerRight: (
+                <TouchableWithoutFeedback
+                    onPress={() => {
+                        debounce();
+                    }}
+                >
+                    <MaterialIcons name="search" size={30} color="#fff" style={{marginRight: 10}}></MaterialIcons>                
+                </TouchableWithoutFeedback>
             ),
     }}
     

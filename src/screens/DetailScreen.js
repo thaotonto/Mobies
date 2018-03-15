@@ -7,6 +7,7 @@ import { fetchDetail } from '../networks/fetchData';
 import _ from 'lodash';
 import ListByCategory from '../components/ListByCategory';
 import LinearGradient from 'react-native-linear-gradient';
+import CastItem from '../components/CastItem';
 
 const STATUS_BAR_HEIGHT = Platform.select({ ios: 20, android: 0 });
 const NAVBAR_HEIGHT = Platform.OS === 'ios' ? STATUS_BAR_HEIGHT + 44 : 58;
@@ -38,13 +39,14 @@ class DetailScreen extends Component {
             detail: '',
             cast: '',
             similar: '',
-            person: ''  
+            person: '',
+            isClicked: false
         };
+        this.onItemClickDelay = _.debounce(this._onPress, 1000, {
+            leading: true,
+            trailing: false
+        });
     }
-
-    _clampedScrollValue = 0;
-    _offsetValue = 0;
-    _scrollValue = 0;
 
     static navigationOptions = ({navigation}) => {
         return {
@@ -52,6 +54,16 @@ class DetailScreen extends Component {
             drawerLockMode: 'locked-closed'
         }
     }
+
+    _onPress=(item) => {
+        this.props.navigation.navigate('FullCast', {
+            item: item
+        });
+    };
+
+    _clampedScrollValue = 0;
+    _offsetValue = 0;
+    _scrollValue = 0;
 
     componentWillUnmount() {
         this.state.scrollAnim.removeAllListeners();
@@ -146,7 +158,7 @@ class DetailScreen extends Component {
             {this.state.detail.genres.length == 0 ? <Text style={styles.InfoSectionStyle}>-</Text> : 
                 _.map(this.state.detail.genres, 'name').map((name, index) => {
                     return (
-                        <Text key={index} style={styles.InfoSectionStyle}>{index=== 0 ? name : `, ${name}`}</Text>
+                        <Text key={index} style={[styles.InfoSectionStyle, {marginRight: 0}]}>{index=== 0 ? name : `, ${name}`}</Text>
                     );
                 })
             }
@@ -192,12 +204,40 @@ class DetailScreen extends Component {
     }
 
     renderCast() {
-        if (this.state.cast !== '')
-        return 
-        // (
-        // TODO
-        // );
-        else return null;
+        if (this.state.cast !== '') {
+            list = _.take(this.state.cast, 5);
+            return (
+                <InfoSection
+                    title='featured cast'
+                    childDirection='column'  
+                    childStyle={{marginRight: 16}}
+                >
+                {list.length === 0 ? <Text style={styles.InfoSectionStyle}>-</Text> :   
+                    list.map((item, index) => {
+                        return (
+                            <CastItem
+                                style={[{backgroundColor: index % 2 == 0 ? '#212121' : '#3d3d3d', marginTop: 8, paddingLeft: 8}]}
+                                key={item.credit_id}
+                                item={item}
+                                navigation={this.props.navigation}     
+                            />    
+                        );
+                    })
+                }
+                {this.state.cast.length > 5 ? 
+                <TouchableWithoutFeedback
+                    onPress={() => this.onItemClickDelay(this.state.cast)}
+                >
+                    <View style={{margin: 4}}>
+                        <Text style={{marginTop: 8, fontSize: 12, color: '#ff9900', alignSelf:'flex-end'}}>See Full Cast</Text>
+                    </View>
+                </TouchableWithoutFeedback>
+                
+                : null}
+                </InfoSection>
+    
+            );
+        } else return null;
     }
 
     renderBioGraphy() {
@@ -256,6 +296,43 @@ class DetailScreen extends Component {
         else return null;
     }
 
+    renderDetail() {
+        const { item } = this.props.navigation.state.params;
+        if (item.profile_path) {
+            if (this.state.person !== '') {
+                return (
+                    <View style={[styles.DetailInfo, {marginRight: 8, marginBottom: 16}]}>
+                        <Text style={{fontWeight: 'bold', color: 'white', fontSize: 16}} >{item.name.toUpperCase()}</Text>
+                        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                            <Text style={{color: '#cdcdcd', fontSize: 12, marginTop: 8, marginRight: 8}} >{this.state.person.birthday}</Text>                        
+                            <Text style={{color: '#cdcdcd', fontSize: 12, marginTop: 8}} >{this.state.person.deathday ? `- ${this.state.person.deathday}` : null}</Text>                                                    
+                        </View>
+
+                        <Text style={{color: '#cdcdcd', fontSize: 12, marginTop: 8}} >{this.state.person.place_of_birth}</Text>                        
+                        <Text style={{color: '#cdcdcd', fontSize: 12, marginTop: 8}} >{this.state.person.gender === 1 ? 'Female' : this.state.person.gender === 2 ? 'Male' : 'Unspecified'}</Text>                        
+                        
+                    </View>
+                );
+            } else return null;    
+        } else return (
+            <View style={styles.DetailInfo}>
+                <Text style={{fontWeight: 'bold', color: 'white', fontSize: 16}} >{item.title ? item.title.toUpperCase() : item.name.toUpperCase()}</Text>
+                <Text style={{color: '#cdcdcd', fontSize: 12, marginTop: 8, marginBottom: 8}} >{item.release_date ? item.release_date.toUpperCase() : item.first_air_date.toUpperCase()}</Text>                        
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <RatingBar 
+                        style={{marginLeft: 0, marginBottom: 0}}
+                        rating={Math.round(item.vote_average) / 2 }
+                        disabled={true}
+                        maxStars={5}
+                        starSize={20}
+                        emptyStarColor='#a8a8a8'
+                    />
+                    <Text style={{color: '#cdcdcd', fontSize: 12}}>{item.vote_count} Ratings</Text>
+                </View>
+            </View>
+        ); 
+    }
+
     render() {
         const { clampedScroll } = this.state;
 
@@ -303,29 +380,14 @@ class DetailScreen extends Component {
                     </ImageBackground>
 
                     <Image
-                        defaultSource={require('../../assets/no_image_movie_tv_portrait_final.png')}  
+                        defaultSource={require('../../assets/no_image_person_u_final_2.png')}  
                         source={{uri: imageLink}}
                         resizeMode='cover'                               
                         style={styles.PosterStyle}
                     />
+                    
+                    {this.renderDetail()}
 
-                    {item.profile_path ? null : 
-                        <View style={styles.DetailInfo}>
-                            <Text style={{fontWeight: 'bold', color: 'white', fontSize: 16}} >{item.title ? item.title.toUpperCase() : item.name.toUpperCase()}</Text>
-                            <Text style={{color: '#cdcdcd', fontSize: 12, marginTop: 8, marginBottom: 8}} >{item.release_date ? item.release_date.toUpperCase() : item.first_air_date.toUpperCase()}</Text>                        
-                            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                                <RatingBar 
-                                    style={{marginLeft: 0, marginBottom: 0}}
-                                    rating={Math.round(item.vote_average) / 2 }
-                                    disabled={true}
-                                    maxStars={5}
-                                    starSize={20}
-                                    emptyStarColor='#a8a8a8'
-                                />
-                                <Text style={{color: '#cdcdcd', fontSize: 12}}>{item.vote_count} Ratings</Text>
-                            </View>
-                        </View>
-                    }
                     {item.profile_path ? null : 
                         <TouchableOpacity
                             activeOpacity={0.7}
@@ -337,9 +399,10 @@ class DetailScreen extends Component {
                     }
                     
                     {item.profile_path ? this.renderKnownAs() : this.renderGenre()}
+                    {item.profile_path ? null : this.renderCast()}                    
                     {item.profile_path ? this.renderBioGraphy() : this.renderStoryline()}
                     {item.profile_path ? this.renderKnownFor() : this.renderSimilar()}
-                    {item.profile_path ? null : this.renderCast()}
+
                 </AnimatedScrollView>
 
                 <Animated.View style={[styles.navbar, { transform: [{ translateY: navbarTranslate }] }]}>
@@ -365,7 +428,7 @@ const styles = {
         height: 160,
         top: 158 + NAVBAR_HEIGHT,
         left: 16,
-        position: 'absolute',        
+        position: 'absolute',
     },
     DetailInfo: {
         marginTop: 16,
@@ -391,6 +454,7 @@ const styles = {
         fontSize: 14,
         color: '#a8a8a8',
         marginTop: 16,
+        marginRight: 8
     },
     navbar: {
         position: 'absolute',

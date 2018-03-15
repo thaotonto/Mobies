@@ -3,13 +3,25 @@ import {connect} from 'react-redux';
 import {NavigationActions} from 'react-navigation';
 import {StatusBar, SafeAreaView, ScrollView, TouchableWithoutFeedback, Platform} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { LOAD_POPULAR_MOVIE, LOAD_NOW_PLAYING_MOVIE, LOAD_COMING_SOON_MOVIE, LOAD_TOP_RATED_MOVIE, LOAD_GENRE_MOVIE } from '../configs/constants';
 import ViewPagerPage from '../components/ViewPagerPage';
 import ListByCategory from '../components/ListByCategory';
+import _ from 'lodash';
 import ListByGenre from '../components/ListByGenre';
 
 class MovieListScreen extends Component {
+    
     static navigationOptions = ({navigation}) => {
+        var debounce = _.debounce(navigateSearch, 1000, {
+            leading: true,
+            trailing: false
+        })
+
+        function navigateSearch() {
+            navigation.navigate('Search');
+        }
+        
         return {
             headerMode:'screen',
             headerBackTitle: null,
@@ -24,14 +36,23 @@ class MovieListScreen extends Component {
             drawerLabel: 'Movies',
             headerLeft: (
                 <TouchableWithoutFeedback
-                    onPress={() => {navigation.navigate('DrawerToggle')}}
+                    onPress={() => {navigation.navigate('DrawerOpen')}}
                 >
                     <Icon name="menu" size={30} color="#fff" style={{marginLeft: 10}}></Icon>
                 </TouchableWithoutFeedback>
             ),
             drawerIcon: ({ tintColor }) => (
                 <Icon name="movie-roll" size={24} color="#fff"></Icon>
-              ),
+            ),
+            headerRight: (
+                <TouchableWithoutFeedback
+                    onPress={() => {
+                        debounce();
+                    }}
+                >
+                    <MaterialIcons name="search" size={30} color="#fff" style={{marginRight: 10}}></MaterialIcons>                
+                </TouchableWithoutFeedback>
+            ),
     }}
     
     componentDidMount(){

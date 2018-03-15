@@ -10,6 +10,8 @@ import DetailScreen from './DetailScreen';
 import MovieListScreen from './MovieListScreen';
 import TVListScreen from './TVListScreen';
 import PeopleListScreen from './PeopleListScreen';
+import FullCast from './FullCast';
+import SearchScreen from './SearchScreen';
 
 //---------------------------------------
 const MovieListStack = StackNavigator({
@@ -18,6 +20,12 @@ const MovieListStack = StackNavigator({
     },
     Detail: {
         screen: DetailScreen
+    },
+    FullCast: {
+        screen: FullCast
+    },
+    Search: {
+        screen: SearchScreen
     }
 });
 
@@ -27,6 +35,12 @@ const TVListStack = StackNavigator({
     },
     Detail: {
         screen: DetailScreen
+    },
+    FullCast: {
+        screen: FullCast
+    },
+    Search: {
+        screen: SearchScreen
     }
 });
 
@@ -36,6 +50,12 @@ const PeopleListStack = StackNavigator({
     },
     Detail: {
         screen: DetailScreen
+    },
+    FullCast: {
+        screen: FullCast
+    },
+    Search: {
+        screen: SearchScreen
     }
 });
 

@@ -6,9 +6,19 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { LOAD_PEOPLE } from '../configs/constants';
 import PeopleItem from '../components/PeopleItem';
 import _ from 'lodash';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 class PeopleListScreen extends React.Component {
     static navigationOptions = ({navigation}) => {
+        var debounce = _.debounce(navigateSearch, 1000, {
+            leading: true,
+            trailing: false
+        })
+
+        function navigateSearch() {
+            navigation.navigate('Search');
+        }
+
         return {
             headerMode:'screen',
             headerBackTitle: null,
@@ -23,14 +33,23 @@ class PeopleListScreen extends React.Component {
             drawerLabel: 'People',
             headerLeft: (
                 <TouchableWithoutFeedback
-                    onPress={() => {navigation.navigate('DrawerToggle')}}
+                    onPress={() => {navigation.navigate('DrawerOpen')}}
                 >
                     <Icon name="menu" size={30} color="#fff" style={{marginLeft: 10}}></Icon>
                 </TouchableWithoutFeedback>
             ),
             drawerIcon: ({ tintColor }) => (
                 <Icon name="account-multiple" size={24} color="#fff"></Icon>
-              ),
+            ),
+            headerRight: (
+                <TouchableWithoutFeedback
+                    onPress={() => {
+                        debounce();
+                    }}
+                >
+                    <MaterialIcons name="search" size={30} color="#fff" style={{marginRight: 10}}></MaterialIcons>                
+                </TouchableWithoutFeedback>
+            ),
     }}
 
     constructor(props) {
