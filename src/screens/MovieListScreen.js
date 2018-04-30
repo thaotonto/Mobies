@@ -9,6 +9,9 @@ import ViewPagerPage from '../components/ViewPagerPage';
 import ListByCategory from '../components/ListByCategory';
 import _ from 'lodash';
 import ListByGenre from '../components/ListByGenre';
+import SInfo from 'react-native-sensitive-info';
+import { fetchDetail } from '../networks/fetchData';
+
 
 class MovieListScreen extends Component {
     
@@ -60,7 +63,15 @@ class MovieListScreen extends Component {
         this.props.dispatch({type: LOAD_POPULAR_MOVIE});
         this.props.dispatch({type: LOAD_NOW_PLAYING_MOVIE});
         this.props.dispatch({type: LOAD_COMING_SOON_MOVIE});
-        this.props.dispatch({type: LOAD_TOP_RATED_MOVIE});        
+        this.props.dispatch({type: LOAD_TOP_RATED_MOVIE}); 
+
+        SInfo.getItem('guest_id',{}).then(value => {
+            if (value === undefined || value === null) {
+                fetchDetail(`https://api.themoviedb.org/3/authentication/guest_session/new?api_key=edf1f4d5b56b3b1d9454f2b090695246`).then((session) => {
+                    SInfo.setItem('guest_id', session.guest_session_id, {});
+                });
+            } 
+        });
     }
 
     renderPopular() {

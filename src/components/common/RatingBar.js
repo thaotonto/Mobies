@@ -19,6 +19,7 @@ const RatingBar = (props) => {
                 starStyle={props.starStyle}
                 selectedStar={props.selectedStar}
                 emptyStarColor={props.emptyStarColor}
+                halfStarEnabled={props.halfStarEnabled}
             />
         </View>
     );

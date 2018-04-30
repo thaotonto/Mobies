@@ -8,6 +8,9 @@ import _ from 'lodash';
 import ListByCategory from '../components/ListByCategory';
 import LinearGradient from 'react-native-linear-gradient';
 import CastItem from '../components/CastItem';
+import PopupDialog, {DialogButton} from 'react-native-popup-dialog';
+import SInfo from 'react-native-sensitive-info';
+import Toast, {DURATION} from 'react-native-easy-toast'
 
 const STATUS_BAR_HEIGHT = Platform.select({ ios: 20, android: 0 });
 const NAVBAR_HEIGHT = Platform.OS === 'ios' ? STATUS_BAR_HEIGHT + 44 : 58;
@@ -39,9 +42,28 @@ class DetailScreen extends Component {
             cast: '',
             similar: '',
             person: '',
-            isClicked: false
+            isClicked: false,
+            isClickedTrailer: false,
+            starCount: 0.5,
+            isRated: false,
+            isBookmarked: false
         };
         this.onItemClickDelay = _.debounce(this._onPress, 1000, {
+            leading: true,
+            trailing: false
+        });
+
+        // this.onTrailerClickDelay = _.debounce(this._onPressTrailer, 1000, {
+        //     leading: true,
+        //     trailing: false
+        // });
+
+        this.onRateClickDelay = _.debounce(this._onPressRate, 1000, {
+            leading: true,
+            trailing: false
+        });
+
+        this.onBookmardClickDelay = _.debounce(this._onPressBookmark, 1000, {
             leading: true,
             trailing: false
         });
@@ -54,10 +76,38 @@ class DetailScreen extends Component {
         }
     }
 
+    onStarRatingPress(rating) {
+        this.setState({
+          starCount: rating
+        });
+        
+      }
+
     _onPress=(item) => {
         this.props.navigation.navigate('FullCast', {
             item: item
         });
+    };
+
+    // _onPressTrailer=(item) => {
+    //     this.props.navigation.navigate('Trailer', {
+    //         item: item
+    //     });
+    // };
+
+    _onPressRate=(item) => {
+        this.popupDialog.show();
+    };
+
+    _onPressBookmark=(item) => {
+        if (this.state.isBookmarked) {
+            this.refs.toast.show('Added to Watchlist');
+        } else {
+            this.setState(state => {
+                return {isBookmarked: true}
+            });
+            SInfo.setItem(`${item.id}`, JSON.stringify(item), {});
+        }
     };
 
     _clampedScrollValue = 0;
@@ -104,12 +154,66 @@ class DetailScreen extends Component {
         });
 
         const { item } = this.props.navigation.state.params;
+        console.log(item);
+        SInfo.getItem(`${item.id}`,{}).then(value => {
+            if (value === undefined || value === null) {
+
+            } else {
+                this.setState(state => {
+                    return {isBookmarked: true}
+                });
+            }
+        });
+        
+        SInfo.getItem('guest_id',{}).then(value => {
+            this.setState(state => {
+                return {guessId: value}
+            });
+
+            if (item.title) {
+                fetchDetail(`https://api.themoviedb.org/3/guest_session/${value}/rated/movies?api_key=edf1f4d5b56b3b1d9454f2b090695246&language=en-US&sort_by=created_at.asc`).then((ratedMovie) => {
+                    if (ratedMovie.total_results != 0) {
+                        _.forEach(ratedMovie.results, (val) => {
+                            if (val.id === item.id) {
+                                this.setState(state => {
+                                    return {isRated: true, starCount: val.rating}
+                                });
+                            }
+                        });
+                    }
+                    
+                });
+            } else {
+                if (item.profile_path) {
+
+                } else {
+                    fetchDetail(`https://api.themoviedb.org/3/guest_session/${value}/rated/tv?api_key=edf1f4d5b56b3b1d9454f2b090695246&language=en-US&sort_by=created_at.asc`).then((ratedTV) => {
+                        if (ratedTV.total_results != 0) {
+                            _.forEach(ratedTV.results, (val) => {
+                                if (val.id === item.id) {
+                                    this.setState(state => {
+                                        return {isRated: true, starCount: val.rating}
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            }
+        });
+
         if (item.title) {
             fetchDetail(`https://api.themoviedb.org/3/movie/${item.id}?api_key=edf1f4d5b56b3b1d9454f2b090695246&language=en-US`).then((detail) => {
                 this.setState(state => {
                     return {detail: detail}
                 });
             });
+            
+            // fetchDetail(`https://api.themoviedb.org/3/movie/${item.id}/videos?api_key=edf1f4d5b56b3b1d9454f2b090695246&language=en-US`).then((video) => {
+            //     this.setState(state => {
+            //         return {video: video}
+            //     });
+            // });
             fetchDetail(`https://api.themoviedb.org/3/movie/${item.id}/credits?api_key=edf1f4d5b56b3b1d9454f2b090695246&language=en-US`).then((cast) => {
                 this.setState(state => {
                     return {cast: cast.cast}
@@ -133,6 +237,11 @@ class DetailScreen extends Component {
                         return {detail: detail}
                     });
                 });
+                // fetchDetail(`https://api.themoviedb.org/3/tv/${item.id}/videos?api_key=edf1f4d5b56b3b1d9454f2b090695246&language=en-US`).then((video) => {
+                //     this.setState(state => {
+                //       return {video: video}
+                //     });
+                // });
                 fetchDetail(`https://api.themoviedb.org/3/tv/${item.id}/credits?api_key=edf1f4d5b56b3b1d9454f2b090695246&language=en-US`).then((cast) => {
                     this.setState(state => {
                         return {cast: cast.cast}
@@ -152,7 +261,7 @@ class DetailScreen extends Component {
         return (
             <InfoSection
                 title='genre'
-                style={[styles.InfoSectionHeaderStyle, {marginTop: 50}]}
+                style={[styles.InfoSectionHeaderStyle]}
             >
             {this.state.detail.genres.length == 0 ? <Text style={styles.InfoSectionStyle}>-</Text> : 
                 _.map(this.state.detail.genres, 'name').map((name, index) => {
@@ -386,16 +495,109 @@ class DetailScreen extends Component {
                     />
                     
                     {this.renderDetail()}
-
+                    
                     {item.profile_path ? null : 
+                        <View style={styles.rateStyle}>
+                        <TouchableWithoutFeedback
+                            onPress={() => this.onRateClickDelay()}
+                        >
+                            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                {this.state.isRated === false ? <Icon name= {Platform.OS === 'ios' ? "ios-star-outline" : "md-star-outline"} size={24} color="#ff9900"></Icon> : <Icon name= {Platform.OS === 'ios' ? "ios-star" : "md-star"} size={24} color="#ff9900"></Icon>}
+                                {this.state.isRated === false ? <Text style={{color: '#ff9900', marginLeft: 8, fontSize: 14}} >Rate This</Text> : <Text style={{color: '#ff9900', marginLeft: 8, fontSize: 14}} >Your Rating: {this.state.starCount * 2}/10</Text>}
+                            </View>
+                        </TouchableWithoutFeedback>
+
+                        <TouchableWithoutFeedback
+                            onPress={() => this.onBookmardClickDelay(item)}
+                        >
+                            <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: 55}}>
+                                {this.state.isBookmarked === false ? <Icon name= {Platform.OS === 'ios' ? "ios-bookmark-outline" : "md-bookmark-outline"} size={24} color="#ff9900"></Icon> : <Icon name= {Platform.OS === 'ios' ? "ios-bookmark" : "md-bookmark"} size={24} color="#ff9900"></Icon>}
+                                {this.state.isBookmarked === false ? <Text style={{color: '#ff9900', marginLeft: 8, fontSize: 14}} >Add to WatchList</Text> : <Text style={{color: '#ff9900', marginLeft: 8, fontSize: 14}} >Added to WatchList</Text>}
+                            </View>
+                        </TouchableWithoutFeedback>
+                        </View>
+                    }
+
+                    
+
+                    <Toast ref="toast"/>
+                    <PopupDialog
+                        ref={(popupDialog) => { this.popupDialog = popupDialog; }}
+                        width={0.9}
+                        height={230}
+                        actions={[<View key={0} style={{backgroundColor: '#303030', flexDirection:'row', justifyContent: 'center'}}>
+                            <DialogButton text="CANCEL" buttonStyle={{backgroundColor: '#212121', marginTop: 25, marginBottom: 8}} textStyle={{color: 'white'}} onPress={() => this.popupDialog.dismiss()}/>
+                            <DialogButton text="CONFIRM" buttonStyle={{backgroundColor: '#212121', marginTop: 25, marginLeft: 16, marginBottom: 8}} textStyle={{color: 'white'}} onPress={() => 
+                                {   
+                                    if (item.title) {
+                                        this.popupDialog.dismiss();
+                                        this.setState(state => {
+                                            return {isRated: true}
+                                        });
+                                        fetch(`https://api.themoviedb.org/3/movie/${item.id}/rating?api_key=edf1f4d5b56b3b1d9454f2b090695246&guest_session_id=${this.state.guessId}`, {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json;charset=utf-8'
+                                            },
+                                            body: JSON.stringify({
+                                                value: this.state.starCount
+                                            }),
+                                        }).then((response) => {
+                                            this.refs.toast.show('Success');
+                                        });
+                                    } else {
+                                        if (item.profile_path) {
+
+                                        } else {
+                                            this.popupDialog.dismiss();
+                                            this.setState(state => {
+                                                return {isRated: true}
+                                            });
+                                            fetch(`https://api.themoviedb.org/3/tv/${item.id}/rating?api_key=edf1f4d5b56b3b1d9454f2b090695246&guest_session_id=${this.state.guessId}`, {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/json;charset=utf-8'
+                                                },
+                                                body: JSON.stringify({
+                                                    value: this.state.starCount
+                                                }),
+                                            }).then((response) => {
+                                                this.refs.toast.show('Success');
+                                            });
+                                        }
+                                    }
+                                    
+                                }}/>
+                            </View>
+                        ]}
+                    >
+                        <View style={styles.dialogStyle}>
+                            <Text style={{color: 'white', fontSize: 20, marginTop: 20, fontWeight: 'bold', marginLeft: 16}}>CHOOSE YOUR RATING (1-10)</Text>
+                            <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 16, justifyContent: 'center'}}>
+                                <RatingBar 
+                                    style={{marginLeft: 0, marginBottom: 8}}
+                                    rating={this.state.starCount}
+                                    disabled={false}
+                                    maxStars={5}
+                                    starSize={30}
+                                    emptyStarColor='#a8a8a8'
+                                    halfStarEnabled={true}
+                                    selectedStar={(rating) => this.onStarRatingPress(rating)}
+                                />
+                                <Text style={{color: 'white', fontSize: 40, marginBottom: 8}}>{this.state.starCount * 2}</Text>
+                            </View>
+                        </View>
+                    </PopupDialog>
+
+                    {/* {item.profile_path ? null : 
                         <TouchableOpacity
                             activeOpacity={0.7}
                             style={styles.ActionButtonStyle}
-                            onPress={() => { console.log("hi")}}
+                            onPress={() => this.onTrailerClickDelay(this.video)}
                         >
                             <Icon name= {Platform.OS === 'ios' ? "ios-play" : "md-play"} size={30} color="#fff"></Icon>
                         </TouchableOpacity>
-                    }
+                    } */}
                     
                     {item.profile_path ? this.renderKnownAs() : this.renderGenre()}
                     {item.profile_path ? null : this.renderCast()}                    
@@ -432,18 +634,28 @@ const styles = {
     DetailInfo: {
         marginTop: 16,
         marginRight: 70,
-        marginLeft: 142
+        marginLeft: 142,
+        height: 120
     },
-    ActionButtonStyle: {
+    // ActionButtonStyle: {
+    //     alignItems: 'center',
+    //     justifyContent: 'center',
+    //     width: 60,  
+    //     height: 60,   
+    //     borderRadius: 30,            
+    //     backgroundColor: '#ff9900',                                    
+    //     position: 'absolute',                                          
+    //     top: Platform.OS === 'ios' ? 172 + NAVBAR_HEIGHT : 170 + NAVBAR_HEIGHT,                                                    
+    //     right: 8, 
+    // },
+    rateStyle: {
+        marginLeft: 16,
+        flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
-        width: 60,  
-        height: 60,   
-        borderRadius: 30,            
-        backgroundColor: '#ff9900',                                    
-        position: 'absolute',                                          
-        top: Platform.OS === 'ios' ? 172 + NAVBAR_HEIGHT : 170 + NAVBAR_HEIGHT,                                                    
-        right: 8, 
+    },
+    dialogStyle: {
+        backgroundColor: '#303030',     
+        flex: 1   
     },
     InfoSectionHeaderStyle: {
         marginLeft: 16,
