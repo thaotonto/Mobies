@@ -511,7 +511,7 @@ class DetailScreen extends Component {
                             onPress={() => this.onBookmardClickDelay(item)}
                         >
                             <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: 55}}>
-                                {this.state.isBookmarked === false ? <Icon name= {Platform.OS === 'ios' ? "ios-bookmark-outline" : "md-bookmark-outline"} size={24} color="#ff9900"></Icon> : <Icon name= {Platform.OS === 'ios' ? "ios-bookmark" : "md-bookmark"} size={24} color="#ff9900"></Icon>}
+                                {this.state.isBookmarked === false ? <Icon name= {Platform.OS === 'ios' ? "ios-bookmark-outline" : "ios-bookmark-outline"} size={24} color="#ff9900"></Icon> : <Icon name= {Platform.OS === 'ios' ? "ios-bookmark" : "md-bookmark"} size={24} color="#ff9900"></Icon>}
                                 {this.state.isBookmarked === false ? <Text style={{color: '#ff9900', marginLeft: 8, fontSize: 14}} >Add to WatchList</Text> : <Text style={{color: '#ff9900', marginLeft: 8, fontSize: 14}} >Added to WatchList</Text>}
                             </View>
                         </TouchableWithoutFeedback>

@@ -62,10 +62,19 @@ class WatchList extends Component {
         SInfo.deleteItem('', {});
         
         SInfo.getAllItems({}).then(values => {
-            this.setState(state => {
-                return {bookmarked: _.drop(values[0], 1)};
-            })
+            if (Platform.OS === 'ios') {
+                this.setState(state => {
+                    return {bookmarked: _.drop(values[0], 1)};
+                });
+            } else {
+                this.setState(state => {
+                    return {bookmarked: _.dropRight(_.map(values, (value, key) => {
+                        return {value, key};
+                    }), 1)};
+                });
+            }
         });
+        
     }
 
     _keyExtractor = (item, index) => item.key;
